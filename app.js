@@ -33,10 +33,14 @@ function onrequest(req, res) {
             res.setHeader('Content-Type', 'text/html')
             res.statusCode = 200
             res.write('<h1> Index of ' + route + '</h1>')
-            res.write('<ul>')
-            files.forEach(function( files){
-              res.write('<li>' + '<a href="' + route + '/' + files + '">' + files + '</a>' + '</li>')
-            })
+            if (files == ""){
+              res.write("<li>Directory is empty</li>")
+            } else {
+                res.write('<a href="..">back</a>')
+                res.write('<ul>')
+                files.forEach(function( files){
+                res.write('<li>' + '<a href="' + route + '/' + files + '">' + files + '</a>' + '</li>')
+            }) }
             res.write('</ul>')
             res.end()
           }
