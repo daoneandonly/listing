@@ -46,15 +46,23 @@ function onrequest(req, res) {
           }
         })
       } else {
-        // When page is not found give 404 + pagenotfound.html
-        route = 'pagenotfound.html'
-        res.statusCode = 404
-        res.setHeader('Content-Type', mime.lookup(route))
-
-        fs.readFile(path.join('static', route), function(err, buf){
-          if (err) return res.end('404 page not found')
-          res.end(buf)
-        } )
+          // if route has not extension name, add .html and
+          if (path.extname(route) === '') {
+            route = route + ".html"
+            res.statusCode = 200
+            res.setHeader('Content-type', mime.lookup(route))
+            res.end(buf)
+        } else {
+            // When page is not found give 404 + pagenotfound.html
+            route = 'pagenotfound.html'
+            res.statusCode = 404
+            res.setHeader('Content-Type', mime.lookup(route))
+            fs.readFile(path.join('static', route),
+            function(err, buf){
+              if (err) return res.end('404 page not found')
+              res.end(buf)
+            } )
+        }
       }
 
     }
