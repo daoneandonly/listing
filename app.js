@@ -18,8 +18,8 @@ function onrequest(req, res) {
   function onread(err, buf){
     if (err){
       if (err.code === "EISDIR"){
-        // HUIDIGE ROUTE = MAP
-        // is there a index.html?
+        // When EISDIR is the error, the current route is a folder
+        // Now check if there is a index.html
         fs.readdir(path.join('static', route), function(err, files){
           if (err) return res.end('error dir not found')
           if (files.includes('index.html')) {
@@ -29,29 +29,39 @@ function onrequest(req, res) {
               res.end(buf)
             })
           } else {
-            //if not, print the array with files
-            res.setHeader('Content-Type', 'text/html')
-            res.statusCode = 200
-            res.write('<h1> Index of ' + route + '</h1>')
-            if (files == ""){
-              res.write("<li>Directory is empty</li>")
-            } else {
-                res.write('<a href="..">back</a>')
-                res.write('<ul>')
-                files.forEach(function( files){
-                res.write('<li>' + '<a href="' + route + '/' + files + '">' + files + '</a>' + '</li>')
+              //if not, print the a page with files as <li> in a <ul>
+              res.setHeader('Content-Type', 'text/html')
+              res.statusCode = 200
+              res.write('<h1> Index of ' + route + '</h1>')
+              if (files == ""){
+                res.write("<li>Directory is empty</li>")
+          } else {
+              res.write('<a href="..">back</a>')
+              res.write('<ul>')
+              files.forEach(function( files){
+              res.write('<li>' + '<a href="' + route + '/' + files + '">' + files + '</a>' + '</li>')
             }) }
             res.write('</ul>')
             res.end()
           }
         })
       } else {
-          // if route has not extension name, add .html and
+          // if route has no extension name, add .html and
           if (path.extname(route) === '') {
+            console.log(route)
             route = route + ".html"
+            console.log(route)
             res.statusCode = 200
             res.setHeader('Content-type', mime.lookup(route))
-            res.end(buf)
+            fs.readFile(path.join('static', route), function(err, buf){
+              if (err){
+                res.statusCode = 404
+                res.setHeader('Content-Type', mime.lookup(route))
+                res.end("Page " + route + " is not found.")
+              }
+              res.end(buf)
+            })
+
         } else {
             // When page is not found give 404 + pagenotfound.html
             route = 'pagenotfound.html'
@@ -65,8 +75,7 @@ function onrequest(req, res) {
         }
       }
 
-    }
-    else {
+    } else {
       //with no error give html
       res.statusCode = 200
       res.setHeader('Content-Type', mime.lookup(route))
