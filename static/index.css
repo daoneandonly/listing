@@ -18,5 +18,15 @@ h1 {
 
 p {
   color: white;
-  font-size: 5em;
+  font-size: 2em;
+}
+
+li, a {
+  font-size: 4rem;
+  color: hotpink;
+  text-decoration: none;
+}
+
+a:hover {
+  color: yellow;
 }

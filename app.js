@@ -30,12 +30,14 @@ function onrequest(req, res) {
             })
           } else {
               //if not, print the a page with files as <li> in a <ul>
+              //using styling from index.css
               res.setHeader('Content-Type', 'text/html')
               res.statusCode = 200
-              res.write('<h1> Index of ' + route + '</h1>')
+              res.write('<link rel="stylesheet" href="index.css"><h1> Index of ' + route + '</h1> <p>This list is automatically generated</p>')
               if (files == ""){
                 res.write("<li>Directory is empty</li>")
           } else {
+              // Write a back button + a link to all the files in the folder
               res.write('<a href="..">back</a>')
               res.write('<ul>')
               files.forEach(function( files){
