@@ -35,6 +35,7 @@ function onrequest(req, res) {
               res.statusCode = 200
               res.write('<link rel="stylesheet" href="index.css"><h1> Index of ' + route + '</h1> <p>This list is automatically generated</p>')
               if (files == ""){
+                // When dir is empty, show the following line
                 res.write("<li>Directory is empty</li>")
           } else {
               // Write a back button + a link to all the files in the folder
@@ -50,10 +51,7 @@ function onrequest(req, res) {
       } else {
           // if route has no extension name, add .html and
           if (path.extname(route) === '') {
-            console.log(route)
             route = route + ".html"
-            console.log(route)
-            res.statusCode = 200
             res.setHeader('Content-type', mime.lookup(route))
             fs.readFile(path.join('static', route), function(err, buf){
               if (err){
@@ -61,6 +59,7 @@ function onrequest(req, res) {
                 res.setHeader('Content-Type', mime.lookup(route))
                 res.end("Page " + route + " is not found.")
               }
+              res.statusCode = 308
               res.end(buf)
             })
 
